@@ -5,12 +5,11 @@ A Claude skill for working with Adaptyv's cloud laboratory platform for protein 
 ## Contents
 
 - `SKILL.md`: Original skill instructions.
-- `reference/`: Original API documentation, examples, experiment guidance, and protein optimization reference material.
-- `LICENSE`: MIT License.
+- `reference/`: API documentation, examples, experiment guidance, and protein optimization reference material.
 
-## Source
+## License
 
-[Original Adaptyv skill](https://github.com/davila7/claude-code-templates/tree/main/cli-tool/components/skills/scientific/adaptyv)
+MIT. See [LICENSE](LICENSE).
 
 ## Usage
 
