@@ -1,104 +1,154 @@
-# claude-adaptyv-skill
+# Adaptyv Skill
 
-A Claude Code skill for managing protein testing and experimental validation workflows with the Adaptyv platform.
+A practical skill for organizing protein-testing and experimental-validation workflows with the Adaptyv cloud laboratory platform. It covers request preparation, API authentication, supported assay workflows, experiment tracking, result retrieval, and protein-candidate review.
 
-## Overview
+The skill connects computational protein design with experimental measurement. Predicted properties and measured experimental results must remain clearly separated.
 
-This skill supports workflows that connect computational protein design with laboratory testing. It helps prepare protein sequences, configure experiments, submit requests, monitor experiment progress, retrieve results, and evaluate optimization opportunities.
+## What This Skill Covers
 
-## Main Capabilities
+- Preparing protein sequences and candidate metadata.
+- Setting up API authentication safely.
+- Understanding the experiment submission workflow.
+- Working with binding, expression, thermostability, and enzyme-activity assays.
+- Tracking experiment identifiers and status.
+- Retrieving and reviewing experimental outputs.
+- Comparing candidates and planning follow-up experiments.
+- Using computational predictors to prioritize candidates before laboratory testing.
 
-- Prepare protein sequence inputs for experimental testing.
-- Organize experiment requests and required metadata.
-- Work with supported assay types.
-- Track experiment status and retrieve available results.
-- Review expression, binding, stability, and activity measurements.
-- Compare candidate sequences and experimental outcomes.
-- Structure iterative protein optimization workflows.
-- Use computational predictors to prioritize candidates before experimental submission.
+## When to Use It
 
-## Experimental Workflows
+Use this skill when preparing a protein-validation request, organizing experiments, submitting an authorized request through the platform API, checking experiment status, retrieving results, or planning a follow-up based on measured evidence.
 
-Depending on platform access and available services, workflows may involve:
-
-- Protein expression testing.
-- Binding assays.
-- Thermostability measurements.
-- Enzyme activity assays.
-- Sequence optimization and candidate comparison.
-- Result review and follow-up experiment planning.
-
-The exact assay options, accepted input formats, and turnaround times depend on the current platform configuration.
+It does not replace scientific review, experimental design review, or the platform's current API documentation.
 
 ## Installation
 
-Install the skill in your Claude Code skills directory:
-
-```bash
+~~~bash
 git clone https://github.com/Brajesh31/claude-adaptyv-skill.git ~/.claude/skills/adaptyv
-```
+~~~
 
-Review the Python dependencies required by the examples before running any scripts.
+The skill's Python examples use `requests` and `python-dotenv`. Install dependencies in an isolated project environment:
 
-## Authentication and Setup
+~~~bash
+uv pip install requests python-dotenv
+~~~
 
-API access may require an account and an API token. Store credentials in environment variables or a secrets manager.
+## Authentication Setup
 
-For a local shell session:
+The API requires an access token. Set it in the environment rather than placing secrets in source files.
 
-```bash
-export ADAPTYV_API_KEY="your_api_key"
-```
+Linux or macOS:
 
-Do not place real credentials in source files, notebooks, issue reports, or version control.
+~~~bash
+export ADAPTYV_API_KEY="your_api_key_here"
+~~~
 
-## Usage
+Windows PowerShell:
 
-Invoke the skill when planning or managing a protein validation workflow:
+~~~powershell
+$env:ADAPTYV_API_KEY = "your_api_key_here"
+~~~
 
-```text
+For local development, a `.env` file can be used if it is excluded from version control. Never commit real credentials, print them in logs, or include them in experiment reports.
+
+## Invocation
+
+~~~text
 /adaptyv
-```
+~~~
 
-Provide the sequence format, experiment objective, candidate identifiers, required assays, and any constraints on cost or turnaround time.
+Provide the experiment objective, sequence format, candidate identifiers, assay type, target information where applicable, replicate requirements, and any budget or timing constraints.
 
 ## Recommended Workflow
 
-1. Define the experimental question and success criteria.
-2. Validate sequence format and candidate metadata.
-3. Review the available assay options.
-4. Prepare the experiment request.
-5. Submit only after confirming the input and account permissions.
-6. Track the experiment using its returned identifier.
-7. Retrieve and validate the results.
-8. Compare results against the original hypothesis.
-9. Decide whether to iterate, redesign, or stop.
+### 1. Define the scientific question
 
-## Reference Guide
+State what property or interaction is being evaluated and how the measurement will inform the next decision.
+
+### 2. Validate candidate inputs
+
+Check sequence formatting, identifiers, sequence alphabet, metadata, and candidate-to-result mapping. Keep an immutable copy of submitted inputs.
+
+### 3. Confirm assay suitability
+
+Select an assay that matches the question. Confirm required target information, controls, replicates, concentration settings, and any platform-specific constraints.
+
+### 4. Prepare the request
+
+Assemble the exact experiment payload. Review all candidate records and assay parameters before submitting.
+
+### 5. Submit with explicit approval
+
+Confirm the authenticated account, intended organization, experiment type, candidate list, and any potential costs. Do not automate submission or billing confirmation without explicit approval.
+
+### 6. Track status
+
+Store the returned experiment identifier. Track status and completion independently from local job state. Do not assume a submission is complete because the API accepted the request.
+
+### 7. Retrieve and validate results
+
+Check that results are complete, preserve raw outputs, and validate units and candidate identifiers. Missing or unresolved measurements must not be treated as zero or a negative result.
+
+### 8. Interpret and plan follow-up
+
+Compare results against the original hypothesis, assess replicate variation and uncertainty, and decide whether to iterate, redesign, or stop.
+
+## Included Reference Files
+
+The repository already includes the four reference files used by this skill:
 
 | File | Purpose |
 |---|---|
-| `reference/api_reference.md` | API operations and data structures |
-| `reference/examples.md` | Example request and response workflows |
-| `reference/experiments.md` | Experiment planning and execution |
-| `reference/protein_optimization.md` | Protein candidate optimization |
+| [API reference](reference/api_reference.md) | Authentication, endpoint structure, requests, and responses |
+| [Examples](reference/examples.md) | Example setup, submission, tracking, and retrieval workflows |
+| [Experiment types](reference/experiments.md) | Assay overview and experiment planning |
+| [Protein optimization](reference/protein_optimization.md) | Computational screening and sequence-quality considerations |
+| [Preflight checklist](reference/experiment-preflight-checklist.md) | Additional request validation before submission |
+| [Results review template](reference/results-review-template.md) | Structured review of returned experiment data |
 
-## Data Handling and Reliability
+## Data and Result Quality
 
-- Validate amino-acid sequences before submission.
-- Keep candidate IDs consistent across analysis and experiment records.
+- Keep candidate IDs consistent across input files, requests, and results.
+- Preserve the submitted sequence and metadata.
 - Record assay conditions and platform parameters.
-- Distinguish predicted properties from measured results.
-- Preserve raw experimental outputs.
-- Do not interpret missing measurements as negative results.
+- Distinguish predicted properties from measured values.
+- Preserve raw outputs before transforming or normalizing data.
+- Record units, replicate counts, and missing measurements.
 - Review uncertainty and replicate variation before ranking candidates.
+- Do not infer a failed experiment from a missing result without checking status.
 
-## Repository Contents
+## Security and Reliability
 
-- `SKILL.md`: Main skill instructions.
-- `reference/`: API, experiment, example, and optimization guides.
-- `README.md`: Workflow overview and setup guidance.
+- Store API tokens in environment variables or a secret manager.
+- Exclude local credential files from version control.
+- Use least-privilege account access.
+- Review experiment cost and request parameters before submission.
+- Avoid automatic quote or payment confirmation unless the user explicitly approves it.
+- Handle network timeouts without blindly repeating potentially non-idempotent submissions.
+- Protect experiment data and sequence information according to the project's data policy.
 
-## Important Note
+## Limitations
 
-This skill supports planning and handling experimental workflows. It does not guarantee assay availability, experimental success, or a specific turnaround time. Confirm current platform access and service details before scheduling work.
+Platform access, available assays, API behavior, pricing, and turnaround times can change. Confirm current details with the platform before submitting an experiment. Example requests are starting points and must be checked against the account's current API contract.
+
+Experimental results are evidence for a specific construct, assay setup, and set of conditions. They are not universal guarantees of protein behavior. Review assay quality and scientific context before drawing conclusions.
+
+## Repository Structure
+
+~~~text
+claude-adaptyv-skill/
+├── SKILL.md
+├── README.md
+├── LICENSE
+└── reference/
+    ├── api_reference.md
+    ├── examples.md
+    ├── experiments.md
+    ├── protein_optimization.md
+    ├── experiment-preflight-checklist.md
+    └── results-review-template.md
+~~~
+
+## License
+
+Released under the MIT License. Copyright (c) 2026 Brajesh Kumar. See the root `LICENSE` file for the complete terms.
